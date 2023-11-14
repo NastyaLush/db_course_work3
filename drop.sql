@@ -1,0 +1,15 @@
+DROP TABLE "role";
+DROP TABLE "reports";
+DROP TABLE "task";
+DROP TABLE "test_result";
+DROP TABLE "user";
+DROP TABLE "event_user";
+DROP TABLE "event";
+DROP TABLE "fraction";
+DROP TYPE status;
+DROP TABLE "places_arendator";
+DROP TABLE "characteristic";
+DROP TABLE "places";
+DROP TABLE "places_characteristic";
+DROP TYPE status_place;
+DROP TABLE "event_places";
