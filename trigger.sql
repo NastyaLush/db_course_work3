@@ -1,4 +1,4 @@
--- Add fraction
+-- Add fraction after adding result
 CREATE OR REPLACE FUNCTION add_fraction_to_user()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -13,7 +13,7 @@ ON "test_result"
 FOR EACH ROW
 EXECUTE FUNCTION add_fraction_to_user();
 
--- Before adding to places_arendator, check if free
+-- Before adding to places_arendator, check is free
 CREATE OR REPLACE FUNCTION check_before_insert_into_places_arendator()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -24,16 +24,14 @@ BEGIN
             OR (NEW.from_time > "from_time" AND NEW.to_time > "from_time")
     ) THEN
         RAISE EXCEPTION 'The time interval overlaps with existing data';
-        RETURN NULL;
     ELSE
-        -- If no overlaps, perform the insertion
         RETURN NEW;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER before_insert_trigger
-BEFORE INSERT ON places_arendator
+BEFORE INSERT ON place_arendator
 FOR EACH ROW
 EXECUTE FUNCTION check_before_insert_into_places_arendator();
 
@@ -45,11 +43,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER role_updated_at_trigger
-BEFORE UPDATE ON "role"
-FOR EACH ROW
-EXECUTE FUNCTION update_updated_at();
 
 -- Reports updated_at
 CREATE TRIGGER reports_updated_at_trigger

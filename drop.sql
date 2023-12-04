@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS place_arendator cascade;
 DROP TYPE IF EXISTS status cascade;
 DROP TABLE IF EXISTS fraction cascade;
 DROP TABLE IF EXISTS event cascade;
-DROP TABLE IF EXISTS event_user cascade;
+DROP TABLE IF EXISTS event_person cascade;
 DROP TABLE IF EXISTS person cascade;
 DROP TABLE IF EXISTS test_result cascade;
 DROP TABLE IF EXISTS task cascade;

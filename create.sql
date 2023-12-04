@@ -10,8 +10,8 @@ CREATE TABLE "fraction" (
 
 CREATE TABLE "person" (
     "person_id" SERIAL PRIMARY KEY,
-    "user_name" varchar(20) NOT NULL,
-    "person_role_id" role DEFAULT 'user',
+    "person_name" varchar(20) NOT NULL,
+    "person_role" role DEFAULT 'user',
     "person_fraction_id" integer REFERENCES "fraction" ("fraction_id")on delete set null on update cascade,
     "created_at" timestamp DEFAULT 'now()',
     "updated_at" timestamp DEFAULT 'now()'
@@ -32,11 +32,12 @@ CREATE TABLE "task" (
     "task_id" SERIAL PRIMARY KEY,
     "task_person_to" integer REFERENCES "person" ("person_id") on delete set null on update cascade,
     "task_person_from" integer REFERENCES "person" ("person_id") on delete set null on update cascade,
-    "task_test" text,
+    "task_text" text,
     "task_status" status DEFAULT 'created',
+    "task_title" varchar(120),
     "created_at" timestamp DEFAULT 'now()',
-    "updated_at" timestamp DEFAULT 'now()',
-    "task_title" varchar(120)
+    "updated_at" timestamp DEFAULT 'now()'
+
 );
 
 CREATE TABLE "test_result" (
@@ -53,7 +54,7 @@ CREATE TABLE "event" (
      "updated_at" timestamp DEFAULT 'now()'
 );
 
-CREATE TABLE "event_user" (
+CREATE TABLE "event_person" (
     "event_participant_id" SERIAL PRIMARY KEY,
     "participant_id" integer REFERENCES "person" ("person_id") on delete set null on update cascade,
     "event_id" integer REFERENCES "event" ("event_id") on delete set null on update cascade,
@@ -72,7 +73,9 @@ CREATE TABLE "place" (
 CREATE TABLE "place_arendator" (
     "place_arendator_id" SERIAL PRIMARY KEY,
     "place_id" integer  REFERENCES "place" ("place_id") on delete set null on update cascade,
-    "arendator_id" integer  REFERENCES "person" ("person_id") on delete set null on update cascade
+    "arendator_id" integer  REFERENCES "person" ("person_id") on delete set null on update cascade,
+    "from_time" timestamp DEFAULT 'now()',
+    "to_time" timestamp DEFAULT 'now()'
 );
 CREATE TABLE "characteristic" (
     "charectiristic_id" SERIAL PRIMARY KEY,
@@ -89,8 +92,7 @@ CREATE TABLE "place_characteristic" (
 CREATE TABLE "event_place" (
     "event_place_id" SERIAL PRIMARY KEY,
     "event_id" integer REFERENCES "event" ("event_id") on delete set null on update cascade,
-    "place_id" integer REFERENCES "place" ("place_id") on delete set null on update cascade,
-    "event_date" timestamp NOT NULL,
+    "place_arendator_id" integer REFERENCES "place_arendator" ("place_arendator_id") on delete set null on update cascade,
     "created_at" timestamp DEFAULT 'now()',
     "updated_at" timestamp DEFAULT 'now()'
 );

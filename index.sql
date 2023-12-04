@@ -18,4 +18,5 @@ create index place_arend_by_place_id on place_arendator using hash(place_id);
 create index place_by_char on place_characteristic using hash(characteristic_id);
 -- вывести характеристики помещений
 create index char_by_place on place_characteristic using hash(place_id);
---
+
+--расписать индексы в рамках предметной области
