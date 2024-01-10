@@ -1,20 +1,24 @@
 package com.runtik.dbcoursework.controller;
 
+import com.runtik.dbcoursework.dto.PersonDTO;
+import com.runtik.dbcoursework.dto.PersonRoleUpdateDTO;
+import com.runtik.dbcoursework.dto.TaskUpdateStatusDTO;
 import com.runtik.dbcoursework.service.PersonService;
-import com.runtik.dbcoursework.response.Response;
-import com.runtik.dbcoursework.response.ResponseWithCollection;
 import com.runtik.dbcoursework.tables.pojos.Person;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.security.RolesAllowed;
+import java.util.List;
+import lombok.extern.log4j.Log4j2;
 
 
-@org.springframework.web.bind.annotation.RestController()
+@RestController()
+@Log4j2
 @RequestMapping(path = "person")
+@SecurityRequirement(name = "javainuseapi")
 public class PersonController {
 
     private final PersonService restService;
@@ -25,14 +29,30 @@ public class PersonController {
     }
 
     @PostMapping(path = "create")
-    @Secured("BOSS")
-    public Response create(@RequestBody Person person) {
-        restService.insertPerson(person);
-        return new Response(HttpStatus.OK, "successfully added");
+    @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
+    public ResponseEntity<String> create(@RequestBody PersonDTO person) {
+        try {
+            restService.insertPerson(person);
+            return new ResponseEntity<>("Report created successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error(e);
+            return new ResponseEntity<>("Failed to create report", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     @GetMapping(path = "get")
-    @Secured("ROLE_USER")
-    public ResponseWithCollection<Person> get() {
-        return new ResponseWithCollection<>(HttpStatus.OK, "successfully received", restService.getPersons());
+    @RolesAllowed("ROLE_BOSS")
+    public ResponseEntity<List<PersonDTO>> get() {
+        try {
+            return new ResponseEntity<>(restService.getPersons(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error(e);
+            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+    @PutMapping(path = "updateRole")
+    @RolesAllowed({"ROLE_BOSS"})
+    public void updateRole(@RequestBody PersonRoleUpdateDTO personRoleUpdateDTO){
+        restService.changePersonRole(personRoleUpdateDTO.getPersonID(), personRoleUpdateDTO.getRole());
+    }
+
 }

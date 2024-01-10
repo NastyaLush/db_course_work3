@@ -1,5 +1,7 @@
 package com.runtik.dbcoursework.service;
 
+import com.runtik.dbcoursework.dto.PersonDTO;
+import com.runtik.dbcoursework.enums.Role;
 import com.runtik.dbcoursework.repository.PersonRepository;
 import com.runtik.dbcoursework.tables.pojos.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +14,14 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
-    public void insertPerson(Person person) {
-        personRepository.insertPerson(person);
+    public void insertPerson(PersonDTO person) {
+        personRepository.createPerson(person);
     }
 
-    public List<Person> getPersons() {
+    public void changePersonRole(Integer personID, Role role){
+        personRepository.changePersonRole(personID, role);
+    }
+    public List<PersonDTO> getPersons() {
 
         return personRepository.getPersons();
     }
