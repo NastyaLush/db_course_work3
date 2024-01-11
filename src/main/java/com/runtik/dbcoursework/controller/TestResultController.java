@@ -2,7 +2,6 @@ package com.runtik.dbcoursework.controller;
 
 import com.runtik.dbcoursework.dto.TestResultDTO;
 import com.runtik.dbcoursework.service.TestResultService;
-import com.runtik.dbcoursework.tables.pojos.TestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +18,11 @@ public class TestResultController {
     @Autowired
     private TestResultService testResultService;
 
-    @GetMapping("get/{id}")
+    @GetMapping("get/{id}/{limit}/{offset}")
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<TestResultDTO>> get(@RequestParam Integer id) {
+    public ResponseEntity<List<TestResultDTO>> get(@RequestParam Integer id, @RequestParam int limit, @RequestParam int offset) {
         try {
-            return new ResponseEntity<>(testResultService.get(id), HttpStatus.CREATED);
+            return new ResponseEntity<>(testResultService.getTestResult(id, limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

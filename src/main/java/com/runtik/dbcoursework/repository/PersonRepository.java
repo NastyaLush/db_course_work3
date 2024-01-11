@@ -23,9 +23,9 @@ public class PersonRepository {
                   .execute();
     }
 
-    public List<PersonDTO> getPersons() {
+    public List<PersonDTO> getPersons(int limit, int offset) {
         try (var table = dslContext.selectFrom(Tables.PERSON)) {
-            return table
+            return table.limit(limit).offset(offset)
                     .fetchInto(PersonDTO.class);
         }
     }

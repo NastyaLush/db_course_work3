@@ -2,7 +2,6 @@ package com.runtik.dbcoursework.controller;
 
 import com.runtik.dbcoursework.dto.ReportDTO;
 import com.runtik.dbcoursework.service.ReportService;
-import com.runtik.dbcoursework.tables.pojos.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +32,11 @@ public class ReportController {
             return new ResponseEntity<>("Failed to create report", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping()
+    @GetMapping(path = "get/{limit}/{offset}")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_HELPER", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<ReportDTO>> get(){
+    public ResponseEntity<List<ReportDTO>> get(@RequestParam int limit, @RequestParam int offset){
         try {
-            return new ResponseEntity<>(reportService.get(), HttpStatus.CREATED);
+            return new ResponseEntity<>(reportService.getReport(limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

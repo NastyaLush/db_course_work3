@@ -34,21 +34,21 @@ public class TaskController {
     public void updateStatus(@RequestBody TaskUpdateStatusDTO taskUpdateStatusDTO){
         taskService.updateStatus(taskUpdateStatusDTO.getId(), taskUpdateStatusDTO.getNewStatus());
     }
-    @GetMapping()
+    @GetMapping(path = "get/{limit}/{offset}")
     @RolesAllowed({"ROLE_BOSS"})
-    public ResponseEntity<List<TaskDTO>> get(){
+    public ResponseEntity<List<TaskDTO>> get(@RequestParam int limit, @RequestParam int offset){
         try {
-            return new ResponseEntity<>(taskService.get(), HttpStatus.CREATED);
+            return new ResponseEntity<>(taskService.getTasks(limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("getMy/{id}")
+    @GetMapping("getMy/{id}/{limit}/{offset}")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_HELPER", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<TaskDTO>> get(@RequestParam Integer id){
+    public ResponseEntity<List<TaskDTO>> get(@RequestParam Integer id, @RequestParam int limit, @RequestParam int offset){
         try {
-            return new ResponseEntity<>(taskService.getMy(id), HttpStatus.CREATED);
+            return new ResponseEntity<>(taskService.getMy(id, limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

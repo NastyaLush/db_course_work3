@@ -15,9 +15,9 @@ public class TestResultRepository {
     @Autowired
     private DSLContext dslContext;
 
-    public List<TestResultDTO> get(Integer id) {
+    public List<TestResultDTO> getTestResults(Integer id, int limit, int offset) {
         try (SelectWhereStep<TestResultRecord> table = dslContext.selectFrom(Tables.TEST_RESULT)) {
-            return table.where(Tables.TEST_RESULT.TEST_RESULT_ID.eq(id))
+            return table.where(Tables.TEST_RESULT.TEST_RESULT_ID.eq(id)).limit(limit).offset(offset)
                     .fetchInto(TestResultDTO.class);
         }
     }

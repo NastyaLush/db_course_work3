@@ -36,13 +36,13 @@ public class EventController {
         }
     }
 
-    @GetMapping(path = "get")
+    @GetMapping(path = "get/{limit}/{offset}")
     @Secured("ROLE_BOSS")
 //    @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE", "ROLE_ARENDATOR"})
-    public ResponseEntity<List<EventDTO>> get() {
+    public ResponseEntity<List<EventDTO>> get(@RequestParam int limit, @RequestParam int offset) {
         try {
 
-            return new ResponseEntity<>(eventService.get(), HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.getEvents(limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,11 +61,11 @@ public class EventController {
         }
     }
 
-    @GetMapping(path = "get_participants/{event_id}")
+    @GetMapping(path = "get_participants/{event_id/{limit}/{offset}}")
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<GetEventParticipants>> getEventParticipants(@RequestParam Integer eventId) {
+    public ResponseEntity<List<EventDTO>> getEventParticipants(@RequestParam Integer eventId, @RequestParam int limit,@RequestParam int offset) {
         try {
-            return new ResponseEntity<>(eventService.getEventParticipants(eventId), HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.getEventParticipants(eventId, limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

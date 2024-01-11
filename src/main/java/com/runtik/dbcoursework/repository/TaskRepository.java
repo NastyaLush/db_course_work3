@@ -33,17 +33,18 @@ public class TaskRepository {
         }
     }
 
-    public List<TaskDTO> get() {
+    public List<TaskDTO> getTask(int limit, int offset) {
         try (var table = dslContext.selectFrom(Tables.TASK)) {
-            return table
+            return table.limit(limit).offset(offset)
                     .fetchInto(TaskDTO.class);
         }
     }
 
-    public List<TaskDTO> getMy(Integer id) {
+    public List<TaskDTO> getMy(Integer id, int limit, int offset) {
         try (var table = dslContext.selectFrom(Tables.TASK)) {
             return table
                     .where(Tables.TASK.TASK_ID.eq(id))
+                    .limit(limit).offset(offset)
                     .fetchInto(TaskDTO.class);
         }
     }

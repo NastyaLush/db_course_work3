@@ -22,9 +22,9 @@ public class ReportRepository {
 
     }
 
-    public List<ReportDTO> get() {
+    public List<ReportDTO> getReport(int limit, int offset) {
         try (var table = dslContext.selectFrom(Tables.REPORT)) {
-            return table
+            return table.limit(limit).offset(offset)
                     .fetchInto(ReportDTO.class);
         }
     }

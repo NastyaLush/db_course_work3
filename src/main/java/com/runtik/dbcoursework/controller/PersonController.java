@@ -39,11 +39,11 @@ public class PersonController {
             return new ResponseEntity<>("Failed to create report", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(path = "get")
+    @GetMapping(path = "get/{limit}/{offset}")
     @RolesAllowed("ROLE_BOSS")
-    public ResponseEntity<List<PersonDTO>> get() {
+    public ResponseEntity<List<PersonDTO>> get(@RequestParam int limit, @RequestParam int offset) {
         try {
-            return new ResponseEntity<>(restService.getPersons(), HttpStatus.CREATED);
+            return new ResponseEntity<>(restService.getPersons(limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

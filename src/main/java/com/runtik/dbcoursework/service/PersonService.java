@@ -21,8 +21,8 @@ public class PersonService {
     public void changePersonRole(Integer personID, Role role){
         personRepository.changePersonRole(personID, role);
     }
-    public List<PersonDTO> getPersons() {
+    public List<PersonDTO> getPersons(int limit, int offset) {
 
-        return personRepository.getPersons();
+        return personRepository.getPersons(limit,offset);
     }
 }

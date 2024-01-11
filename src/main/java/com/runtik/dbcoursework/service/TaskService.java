@@ -1,10 +1,8 @@
 package com.runtik.dbcoursework.service;
 
-import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.dto.TaskDTO;
 import com.runtik.dbcoursework.enums.Status;
 import com.runtik.dbcoursework.repository.TaskRepository;
-import com.runtik.dbcoursework.tables.pojos.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -19,11 +17,11 @@ public class TaskService {
     public void updateStatus(Integer taskId, Status newStatus){
         taskRepository.updateStatus(taskId, newStatus);
     }
-    public List<TaskDTO> get() {
-        return taskRepository.get();
+    public List<TaskDTO> getTasks(int limit, int offset) {
+        return taskRepository.getTask(limit, offset);
     }
 
-    public List<TaskDTO> getMy(Integer id) {
-        return taskRepository.getMy(id);
+    public List<TaskDTO> getMy(Integer id, int limit, int offset) {
+        return taskRepository.getMy(id, limit, offset);
     }
 }

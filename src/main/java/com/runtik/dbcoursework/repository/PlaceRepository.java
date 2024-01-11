@@ -18,16 +18,16 @@ public class PlaceRepository {
     @Autowired
     private DSLContext dslContext;
 
-    public List<PlaceDTO> get() {
+    public List<PlaceDTO> getPlaces(int limit, int offset) {
         try (var table = dslContext.selectFrom(Tables.PLACE)) {
-            return table
+            return table.limit(limit).offset(offset)
                     .fetchInto(PlaceDTO.class);
         }
     }
 
-    public List<PlaceDTO> getFree(Integer fractionId, LocalDateTime from, LocalDateTime to) {
+    public List<PlaceDTO> getFree(Integer fractionId, LocalDateTime from, LocalDateTime to, int limit, int offset) {
         try (var table = dslContext.selectFrom(Routines.getFreePlacesInfraction(fractionId, from, to))) {
-            return table.fetchInto(PlaceDTO.class);
+            return table.limit(limit).offset(offset).fetchInto(PlaceDTO.class);
         }
     }
 
@@ -64,9 +64,9 @@ public class PlaceRepository {
 
     }
 
-    public List<GetPlaceCharacteristics> getPlaceCharestiristic(Integer placeId) {
+    public List<GetPlaceCharacteristics> getPlaceCharestiristic(Integer placeId, int limit, int offset) {
         try (var table = dslContext.selectFrom(Routines.getPlaceCharacteristics(placeId))) {
-            return table.fetchInto(GetPlaceCharacteristics.class);
+            return table.limit(limit).offset(offset).fetchInto(GetPlaceCharacteristics.class);
         }
     }
 }

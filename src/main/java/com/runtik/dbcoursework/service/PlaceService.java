@@ -1,14 +1,9 @@
 package com.runtik.dbcoursework.service;
 
-import com.runtik.dbcoursework.Routines;
-import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.dto.CharacteristicDTO;
 import com.runtik.dbcoursework.dto.EventPlaceDTO;
 import com.runtik.dbcoursework.dto.PlaceDTO;
 import com.runtik.dbcoursework.repository.PlaceRepository;
-import com.runtik.dbcoursework.tables.pojos.Place;
-import com.runtik.dbcoursework.tables.pojos.Characteristic;
-import com.runtik.dbcoursework.tables.pojos.EventPlace;
 import com.runtik.dbcoursework.tables.pojos.GetPlaceCharacteristics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +14,11 @@ import java.util.List;
 public class PlaceService {
     @Autowired
     private PlaceRepository placeRepository;
-    public List<PlaceDTO> get(){
-        return placeRepository.get();
+    public List<PlaceDTO> getPlaces(int limit, int offset){
+        return placeRepository.getPlaces(limit, offset);
     }
-    public List<PlaceDTO> getFree(Integer fractionId, LocalDateTime from, LocalDateTime to){
-        return placeRepository.getFree(fractionId,from,to);
+    public List<PlaceDTO> getFree(Integer fractionId, LocalDateTime from, LocalDateTime to, int limit, int offset){
+        return placeRepository.getFree(fractionId,from,to, limit, offset);
     }
     public void create(PlaceDTO place){
         placeRepository.create(place);
@@ -43,7 +38,7 @@ public class PlaceService {
     public void addPlaceToEvent(EventPlaceDTO eventPlace){
         placeRepository.addPlaceToEvent(eventPlace);
     }
-    public List<GetPlaceCharacteristics> getPlaceCharestiristic(Integer placeId){
-        return placeRepository.getPlaceCharestiristic(placeId);
+    public List<GetPlaceCharacteristics> getPlaceCharestiristic(Integer placeId, int limit, int offset){
+        return placeRepository.getPlaceCharestiristic(placeId, limit, offset);
     }
 }

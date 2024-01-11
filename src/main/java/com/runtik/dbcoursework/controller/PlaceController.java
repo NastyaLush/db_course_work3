@@ -2,9 +2,6 @@ package com.runtik.dbcoursework.controller;
 
 import com.runtik.dbcoursework.dto.*;
 import com.runtik.dbcoursework.service.PlaceService;
-import com.runtik.dbcoursework.tables.pojos.Place;
-import com.runtik.dbcoursework.tables.pojos.Characteristic;
-import com.runtik.dbcoursework.tables.pojos.EventPlace;
 import com.runtik.dbcoursework.tables.pojos.GetPlaceCharacteristics;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +20,22 @@ import lombok.extern.log4j.Log4j2;
 public class PlaceController {
     @Autowired
     private PlaceService placeService;
-    @GetMapping(path = "get")
+    @GetMapping(path = "get/{limit}/{offset}")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<PlaceDTO>> get(){
+    public ResponseEntity<List<PlaceDTO>> get(@RequestParam int limit, @RequestParam int offset){
         try {
-            return new ResponseEntity<>(placeService.get(), HttpStatus.CREATED);
+            return new ResponseEntity<>(placeService.getPlaces(limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
-    @GetMapping(path = "getFree/{fraction_id}/{from}/{to}")
+    @GetMapping(path = "getFree/{fraction_id}/{from}/{to}/{limit}/{offset}")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<PlaceDTO>> getFree(@RequestParam Integer fractionId, @RequestParam LocalDateTime from, @RequestParam LocalDateTime to){
+    public ResponseEntity<List<PlaceDTO>> getFree(@RequestParam Integer fractionId, @RequestParam LocalDateTime from, @RequestParam LocalDateTime to, @RequestParam int limit, @RequestParam int offset){
         try {
-            return new ResponseEntity<>(placeService.getFree(fractionId,from,to), HttpStatus.CREATED);
+            return new ResponseEntity<>(placeService.getFree(fractionId,from,to, limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -101,11 +98,11 @@ public class PlaceController {
             return new ResponseEntity<>("failed to add place toevent", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(path = "get_place_characteristics/{place_id}")
+    @GetMapping(path = "get_place_characteristics/{place_id}/{limit}/{offset}")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<GetPlaceCharacteristics>> getPlaceCharestiristic(@RequestParam Integer placeId){
+    public ResponseEntity<List<GetPlaceCharacteristics>> getPlaceCharestiristic(@RequestParam Integer placeId, @RequestParam int limit, @RequestParam int offset){
         try {
-            return new ResponseEntity<>(placeService.getPlaceCharestiristic(placeId), HttpStatus.CREATED);
+            return new ResponseEntity<>(placeService.getPlaceCharestiristic(placeId, limit, offset), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
