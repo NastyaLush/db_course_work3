@@ -3,7 +3,9 @@ package com.runtik.dbcoursework.repository;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.dto.TaskDTO;
 import com.runtik.dbcoursework.enums.Status;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.SortField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -33,19 +35,11 @@ public class TaskRepository {
         }
     }
 
-    public List<TaskDTO> getTask(int limit, int offset) {
+    public List<TaskDTO> getTask(int limit, int offset, List<SortField<?>> sortFields, Condition condition) {
         try (var table = dslContext.selectFrom(Tables.TASK)) {
-            return table.limit(limit).offset(offset)
+            return table.where(condition).orderBy(sortFields).limit(limit).offset(offset)
                     .fetchInto(TaskDTO.class);
         }
     }
 
-    public List<TaskDTO> getMy(Integer id, int limit, int offset) {
-        try (var table = dslContext.selectFrom(Tables.TASK)) {
-            return table
-                    .where(Tables.TASK.TASK_ID.eq(id))
-                    .limit(limit).offset(offset)
-                    .fetchInto(TaskDTO.class);
-        }
-    }
 }

@@ -23,8 +23,7 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @PostMapping(path = "create")
-//    @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
+    @PostMapping()
     @Secured("ROLE_BOSS")
     public ResponseEntity<String> create(@RequestBody EventDTO event) {
         try {
@@ -36,14 +35,17 @@ public class EventController {
         }
     }
 
-    @GetMapping(path = "get/{limit}/{offset}")
+    @GetMapping
     @Secured("ROLE_BOSS")
-//    @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE", "ROLE_ARENDATOR"})
-    public ResponseEntity<List<EventDTO>> get(@RequestParam int limit, @RequestParam int offset) {
+    public ResponseEntity<List<EventDTO>> get(@RequestParam int limit,
+                                              @RequestParam int offset,
+                                              @RequestParam(required = false) String[] sort,
+                                              @RequestParam(required = false) String[] filter
+    ) {
         try {
-
-            return new ResponseEntity<>(eventService.getEvents(limit, offset), HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.getEvents(limit, offset, sort, filter), HttpStatus.CREATED);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -61,11 +63,17 @@ public class EventController {
         }
     }
 
-    @GetMapping(path = "get_participants/{event_id/{limit}/{offset}}")
+    @GetMapping(path = "get_participants")
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<EventDTO>> getEventParticipants(@RequestParam Integer eventId, @RequestParam int limit,@RequestParam int offset) {
+    public ResponseEntity<List<GetEventParticipants>> getEventParticipants(@RequestParam Integer eventId,
+                                                                           @RequestParam int limit,
+                                                                           @RequestParam int offset,
+                                                                           @RequestParam(required = false)
+                                                                           String[] sort,
+                                                                           @RequestParam(required = false)
+                                                                           String[] filter) {
         try {
-            return new ResponseEntity<>(eventService.getEventParticipants(eventId, limit, offset), HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.getEventParticipants(eventId, limit, offset,sort,filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

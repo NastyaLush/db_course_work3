@@ -1,8 +1,13 @@
 package com.runtik.dbcoursework.repository;
 
+import com.runtik.dbcoursework.Routines;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.dto.EventDTO;
+
+import com.runtik.dbcoursework.tables.pojos.GetEventParticipants;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.SortField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -20,9 +25,9 @@ public class EventRepository {
                   .execute();
     }
 
-    public List<EventDTO> getEvents(int limit, int offset) {
+    public List<EventDTO> getEvents(int limit, int offset, List<SortField<?>> sortFields,Condition condition) {
         try (var table = dslContext.selectFrom(Tables.EVENT)) {
-            return table.limit(limit).offset(offset)
+            return table.where(condition).orderBy(sortFields).limit(limit).offset(offset)
                     .fetchInto(EventDTO.class);
         }
     }
@@ -31,11 +36,12 @@ public class EventRepository {
         addUserOnEvent(dslContext.configuration(), personId, eventId);
     }
 
-    public List<EventDTO> getEventParticipants(Integer eventId, int limit, int offset) {
-        try (var table = dslContext.selectFrom(Tables.EVENT)) {
-            return table.where(Tables.EVENT.EVENT_ID.eq(eventId)).limit(limit).offset(offset)
-                        .fetchInto(EventDTO.class);
+    public List<GetEventParticipants> getEventParticipants(Integer eventId, int limit, int offset, List<SortField<?>> sortFields, Condition condition) {
+        try (var table = dslContext.selectFrom(Routines.getEventParticipants(eventId))) {
+            return table.where(condition).orderBy(sortFields).limit(limit).offset(offset)
+                        .fetchInto(GetEventParticipants.class);
         }
+
     }
 
 }

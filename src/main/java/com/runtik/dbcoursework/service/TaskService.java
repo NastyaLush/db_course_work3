@@ -1,5 +1,7 @@
 package com.runtik.dbcoursework.service;
 
+import com.runtik.dbcoursework.Tables;
+import com.runtik.dbcoursework.Util;
 import com.runtik.dbcoursework.dto.TaskDTO;
 import com.runtik.dbcoursework.enums.Status;
 import com.runtik.dbcoursework.repository.TaskRepository;
@@ -17,11 +19,8 @@ public class TaskService {
     public void updateStatus(Integer taskId, Status newStatus){
         taskRepository.updateStatus(taskId, newStatus);
     }
-    public List<TaskDTO> getTasks(int limit, int offset) {
-        return taskRepository.getTask(limit, offset);
+    public List<TaskDTO> getTasks(int limit, int offset, String[] sortFields,String[]filter) {
+        return taskRepository.getTask(limit, offset, Util.getSortedFields(sortFields, Tables.TASK), Util.getFilterFields(filter, Tables.TASK));
     }
 
-    public List<TaskDTO> getMy(Integer id, int limit, int offset) {
-        return taskRepository.getMy(id, limit, offset);
-    }
 }

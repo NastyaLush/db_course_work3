@@ -1,10 +1,8 @@
 package com.runtik.dbcoursework.controller;
 
-import com.runtik.dbcoursework.dto.PersonDTO;
+import com.runtik.dbcoursework.dto.PersonCreateDTO;
 import com.runtik.dbcoursework.dto.PersonRoleUpdateDTO;
-import com.runtik.dbcoursework.dto.TaskUpdateStatusDTO;
 import com.runtik.dbcoursework.service.PersonService;
-import com.runtik.dbcoursework.tables.pojos.Person;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,30 +26,24 @@ public class PersonController {
         this.restService = restService;
     }
 
-    @PostMapping(path = "create")
-    @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
-    public ResponseEntity<String> create(@RequestBody PersonDTO person) {
-        try {
-            restService.insertPerson(person);
-            return new ResponseEntity<>("Report created successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.error(e);
-            return new ResponseEntity<>("Failed to create report", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    @GetMapping(path = "get/{limit}/{offset}")
+    @GetMapping()
     @RolesAllowed("ROLE_BOSS")
-    public ResponseEntity<List<PersonDTO>> get(@RequestParam int limit, @RequestParam int offset) {
+    public ResponseEntity<List<PersonCreateDTO>> get(@RequestParam int limit, @RequestParam int offset,
+                                                     @RequestParam(required = false)
+                                                     String[] sort,
+                                                     @RequestParam(required = false)
+                                                     String[] filter) {
         try {
-            return new ResponseEntity<>(restService.getPersons(limit, offset), HttpStatus.CREATED);
+            return new ResponseEntity<>(restService.getPersons(limit, offset,sort,filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PutMapping(path = "updateRole")
+
+    @PutMapping()
     @RolesAllowed({"ROLE_BOSS"})
-    public void updateRole(@RequestBody PersonRoleUpdateDTO personRoleUpdateDTO){
+    public void updateRole(@RequestBody PersonRoleUpdateDTO personRoleUpdateDTO) {
         restService.changePersonRole(personRoleUpdateDTO.getPersonID(), personRoleUpdateDTO.getRole());
     }
 

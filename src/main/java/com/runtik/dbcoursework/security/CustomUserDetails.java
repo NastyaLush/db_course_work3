@@ -20,13 +20,8 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Role role = person.getPersonRole();
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role.getLiteral()));
-        authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getLiteral().toUpperCase()));
-        return authorities;
+        return List.of(new SimpleGrantedAuthority("ROLE_"+role.getLiteral().toUpperCase()));
     }
-
-
 
     @Override
     public String getPassword() {

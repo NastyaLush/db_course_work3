@@ -2,7 +2,9 @@ package com.runtik.dbcoursework.repository;
 
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.dto.ReportDTO;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.SortField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -22,9 +24,9 @@ public class ReportRepository {
 
     }
 
-    public List<ReportDTO> getReport(int limit, int offset) {
+    public List<ReportDTO> getReport(int limit, int offset, List<SortField<?>> sortFields, Condition condition) {
         try (var table = dslContext.selectFrom(Tables.REPORT)) {
-            return table.limit(limit).offset(offset)
+            return table.where(condition).orderBy(sortFields).limit(limit).offset(offset)
                     .fetchInto(ReportDTO.class);
         }
     }

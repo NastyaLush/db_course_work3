@@ -2,6 +2,7 @@ package com.runtik.dbcoursework.controller;
 
 import com.runtik.dbcoursework.dto.TestResultDTO;
 import com.runtik.dbcoursework.service.TestResultService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,24 +13,30 @@ import lombok.extern.log4j.Log4j2;
 
 @RestController
 @RequestMapping(path = "testResult")
+@SecurityRequirement(name = "javainuseapi")
 @Log4j2
 public class TestResultController {
 
     @Autowired
     private TestResultService testResultService;
 
-    @GetMapping("get/{id}/{limit}/{offset}")
+    @GetMapping()
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<TestResultDTO>> get(@RequestParam Integer id, @RequestParam int limit, @RequestParam int offset) {
+    public ResponseEntity<List<TestResultDTO>> get(@RequestParam int limit,
+                                                   @RequestParam int offset, @RequestParam(required = false)
+                                                   String[] sort,
+                                                   @RequestParam(required = false)
+                                                   String[] filter) {
         try {
-            return new ResponseEntity<>(testResultService.getTestResult(id, limit, offset), HttpStatus.CREATED);
+            return new ResponseEntity<>(testResultService.getTestResult(limit, offset, sort, filter),
+                                        HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping(path = "create")
+    @PostMapping()
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
     public ResponseEntity<String> create(@RequestBody TestResultDTO testResult) {
         try {
@@ -38,5 +45,6 @@ public class TestResultController {
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>("Failed to add result", HttpStatus.INTERNAL_SERVER_ERROR);
-        } }
+        }
+    }
 }
