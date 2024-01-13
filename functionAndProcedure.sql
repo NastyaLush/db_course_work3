@@ -57,22 +57,21 @@ insert into person(person_name, person_role, person_fraction_id)
 values ($1, $2, $3);
 $$ language sql;
 
-create or replace function get_free_places_infraction(fraction_id integer, from_time timestamp, to_time timestamp)
+create or replace function get_free_places(from_time timestamp, to_time timestamp)
     returns table
             (
                 id       integer,
-                fraction varchar(20),
                 name     varchar(20)
             )
 as
 $$
-select place_id as id, fraction_name as fraction, place_name as name
+select place_id as id, place_name as name
 from place
          left join fraction using (fraction_id)
          left join place_arendator using (place_id)
-where fraction_id = get_free_places_infraction.fraction_id and
-      (get_free_places_infraction.from_time < to_time AND get_free_places_infraction.to_time < to_time)
-   OR (get_free_places_infraction.from_time > from_time AND get_free_places_infraction.to_time > from_time)
+where fraction_id = (select fraction_id from fraction where fraction_name='Отречение') and
+      (get_free_places.from_time < to_time AND get_free_places.to_time < to_time)
+   OR (get_free_places.from_time > from_time AND get_free_places.to_time > from_time)
 $$ language sql;
 
 create or replace function arendate_place(place_id integer, arendator_id integer, from_time timestamp,
@@ -159,7 +158,8 @@ BEGIN
                  WHERE report_created_by = person_id;
 END;
 $$ LANGUAGE plpgsql;
-CREATE OR REPLACE FUNCTION get_event_participants(event_id INT)
+
+CREATE OR REPLACE FUNCTION get_event_participants(event_id_f INT)
     RETURNS TABLE
             (
                 person_id   INT,
@@ -171,7 +171,7 @@ BEGIN
     RETURN QUERY SELECT person.person_id, person.person_name
                  FROM person
                           JOIN event_person ON person.person_id = event_person.participant_id
-                 WHERE event_person.event_id = event_id;
+                 WHERE event_person.event_id = event_id_f;
 END;
 $$ LANGUAGE plpgsql;
 CREATE OR REPLACE PROCEDURE add_new_place(place_name VARCHAR(20), fraction_id INT)
