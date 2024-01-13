@@ -2,6 +2,7 @@ package com.runtik.dbcoursework.controller;
 
 import com.runtik.dbcoursework.dto.PersonCreateDTO;
 import com.runtik.dbcoursework.dto.PersonRoleUpdateDTO;
+import com.runtik.dbcoursework.dto.PersonSelectDTO;
 import com.runtik.dbcoursework.service.PersonService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class PersonController {
 
     @GetMapping()
     @RolesAllowed("ROLE_BOSS")
-    public ResponseEntity<List<PersonCreateDTO>> get(@RequestParam int limit, @RequestParam int offset,
+    public ResponseEntity<List<PersonSelectDTO>> get(@RequestParam int limit, @RequestParam int offset,
                                                      @RequestParam(required = false)
                                                      String[] sort,
                                                      @RequestParam(required = false)

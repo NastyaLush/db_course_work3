@@ -1,6 +1,6 @@
 package com.runtik.dbcoursework.controller;
 
-import com.runtik.dbcoursework.dto.AuthenticationResponse;
+import com.runtik.dbcoursework.dto.AuthResponse;
 import com.runtik.dbcoursework.dto.LoginRequest;
 import com.runtik.dbcoursework.dto.SignUpRequest;
 import com.runtik.dbcoursework.service.AuthService;
@@ -20,13 +20,13 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<AuthResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.authenticate(loginRequest));
     }
 
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<AuthResponse> register(@RequestBody SignUpRequest signUpRequest) {
         return ResponseEntity.ok(authService.register(signUpRequest));
     }
 }

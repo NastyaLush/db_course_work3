@@ -2,6 +2,7 @@ package com.runtik.dbcoursework.repository;
 
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.dto.PersonCreateDTO;
+import com.runtik.dbcoursework.dto.PersonSelectDTO;
 import com.runtik.dbcoursework.enums.Role;
 import com.runtik.dbcoursework.tables.pojos.Person;
 import org.jooq.Condition;
@@ -19,18 +20,26 @@ public class PersonRepository {
     private DSLContext dslContext;
 
 
-    public void createPerson(Person person) {
-        dslContext.insertInto(Tables.PERSON, Tables.PERSON.PERSON_FRACTION_ID, Tables.PERSON.PERSON_NAME,
-                              Tables.PERSON.PERSON_PASSWORD,
-                              Tables.PERSON.PERSON_ROLE)
-                  .values(person.getPersonFractionId(), person.getPersonName(), person.getPersonPassword(), person.getPersonRole())
-                  .execute();
+    public PersonSelectDTO createPerson(Person person) {
+        return dslContext.insertInto(Tables.PERSON, Tables.PERSON.PERSON_FRACTION_ID, Tables.PERSON.PERSON_NAME,
+                                     Tables.PERSON.PERSON_PASSWORD,
+                                     Tables.PERSON.PERSON_ROLE)
+                         .values(person.getPersonFractionId(), person.getPersonName(), person.getPersonPassword(),
+                                 person.getPersonRole())
+                         .returningResult(Tables.PERSON.PERSON_ID, Tables.PERSON.PERSON_NAME, Tables.PERSON.PERSON_ROLE,
+                                          Tables.PERSON.PERSON_FRACTION_ID)
+                         .fetch()
+                         .into(PersonSelectDTO.class)
+                         .get(0);
     }
 
-    public List<PersonCreateDTO> getPersons(int limit, int offset, List<SortField<?>> sortFields, Condition condition) {
+    public List<PersonSelectDTO> getPersons(int limit, int offset, List<SortField<?>> sortFields, Condition condition) {
         try (var table = dslContext.selectFrom(Tables.PERSON)) {
-            return table.where(condition).orderBy(sortFields).limit(limit).offset(offset)
-                    .fetchInto(PersonCreateDTO.class);
+            return table.where(condition)
+                        .orderBy(sortFields)
+                        .limit(limit)
+                        .offset(offset)
+                        .fetchInto(PersonSelectDTO.class);
         }
     }
 
