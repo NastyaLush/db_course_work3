@@ -2,12 +2,10 @@ package com.runtik.dbcoursework.repository;
 
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.dto.TestResultDTO;
-import com.runtik.dbcoursework.tables.records.TestResultRecord;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.SelectWhereStep;
-import org.jooq.SortField;
+import com.runtik.dbcoursework.dto.TestResultSelectDTO;
+import org.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
@@ -17,13 +15,19 @@ public class TestResultRepository {
     @Autowired
     private DSLContext dslContext;
 
-    public List<TestResultDTO> getTestResults(int limit, int offset, List<SortField<?>> sortFields,
+    public List<TestResultSelectDTO> getTestResults(Pageable pageable, List<SortField<?>> sortFields,
                                               Condition condition) {
-        try (SelectWhereStep<TestResultRecord> table = dslContext.selectFrom(Tables.TEST_RESULT)) {
-            return table.where(condition).orderBy(sortFields)
-                        .limit(limit)
-                        .offset(offset)
-                        .fetchInto(TestResultDTO.class);
+        try (SelectJoinStep<Record2<String, String>> table = dslContext.select(Tables.PERSON.PERSON_NAME, Tables.FRACTION.FRACTION_NAME)
+                                                                                                          .from(Tables.TEST_RESULT)) {
+            return table.join(Tables.FRACTION)
+                        .on(Tables.TEST_RESULT.FRACTION_ID.eq(Tables.FRACTION.FRACTION_ID))
+                        .join(Tables.PERSON)
+                        .on(Tables.TEST_RESULT.PERSON_ID.eq(Tables.PERSON.PERSON_ID))
+                        .where(condition)
+                        .orderBy(sortFields)
+                        .limit(pageable.getPageSize())
+                        .offset(pageable.getPageNumber() * pageable.getPageSize())
+                        .fetchInto(TestResultSelectDTO.class);
         }
     }
 

@@ -1,9 +1,12 @@
 package com.runtik.dbcoursework.controller;
 
 import com.runtik.dbcoursework.dto.ReportDTO;
+import com.runtik.dbcoursework.dto.ReportSelectDTO;
 import com.runtik.dbcoursework.service.ReportService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,13 +41,11 @@ public class ReportController {
 
     @GetMapping()
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_HELPER", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<ReportDTO>> get(@RequestParam int limit, @RequestParam int offset,
-                                               @RequestParam(required = false)
-                                               String[] sort,
-                                               @RequestParam(required = false)
+    public ResponseEntity<List<ReportSelectDTO>> get(@PageableDefault Pageable pageable,
+                                                     @RequestParam(required = false)
                                                String[] filter) {
         try {
-            return new ResponseEntity<>(reportService.getReport(limit, offset, sort, filter), HttpStatus.CREATED);
+            return new ResponseEntity<>(reportService.getReport(pageable, filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

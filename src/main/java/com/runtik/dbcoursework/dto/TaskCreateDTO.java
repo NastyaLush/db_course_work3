@@ -1,16 +1,14 @@
 package com.runtik.dbcoursework.dto;
 
 import com.runtik.dbcoursework.enums.Status;
-import java.io.Serializable;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-public class TaskDTO implements Serializable {
-
+@Data
+public class TaskCreateDTO {
     private static final long serialVersionUID = 1L;
 
-    private String personNameFrom;
-    private String personNameTo;
+    private Integer taskPersonTo;
+    private Integer taskPersonFrom;
     private String taskText;
     private Status taskStatus;
     private String taskTitle;

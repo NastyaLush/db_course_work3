@@ -1,9 +1,12 @@
 package com.runtik.dbcoursework.controller;
 
 import com.runtik.dbcoursework.dto.TestResultDTO;
+import com.runtik.dbcoursework.dto.TestResultSelectDTO;
 import com.runtik.dbcoursework.service.TestResultService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +25,11 @@ public class TestResultController {
 
     @GetMapping()
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<TestResultDTO>> get(@RequestParam int limit,
-                                                   @RequestParam int offset, @RequestParam(required = false)
-                                                   String[] sort,
-                                                   @RequestParam(required = false)
-                                                   String[] filter) {
+    public ResponseEntity<List<TestResultSelectDTO>> get(@PageableDefault Pageable pageable,
+                                                         @RequestParam(required = false)
+                                                         String[] filter) {
         try {
-            return new ResponseEntity<>(testResultService.getTestResult(limit, offset, sort, filter),
+            return new ResponseEntity<>(testResultService.getTestResult(pageable, filter),
                                         HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);

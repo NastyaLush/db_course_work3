@@ -7,6 +7,7 @@ import com.runtik.dbcoursework.dto.PersonSelectDTO;
 import com.runtik.dbcoursework.enums.Role;
 import com.runtik.dbcoursework.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -20,8 +21,9 @@ public class PersonService {
     public void changePersonRole(Integer personID, Role role){
         personRepository.changePersonRole(personID, role);
     }
-    public List<PersonSelectDTO> getPersons(int limit, int offset, String[] sortFields, String[]filter) {
+    public List<PersonSelectDTO> getPersons(Pageable pageable, String[]filter) {
 
-        return personRepository.getPersons(limit, offset, Util.getSortedFields(sortFields, Tables.PERSON), Util.getFilterFields(filter, Tables.PERSON));
+        return personRepository.getPersons(pageable, Util.getSortedFields(pageable.getSort(), Tables.PERSON), Util.getFilterFields(filter, Tables.PERSON));
+
     }
 }

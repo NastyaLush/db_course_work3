@@ -1,10 +1,13 @@
 package com.runtik.dbcoursework.controller;
 
 import com.runtik.dbcoursework.dto.TaskDTO;
+import com.runtik.dbcoursework.dto.TaskCreateDTO;
 import com.runtik.dbcoursework.dto.TaskUpdateStatusDTO;
 import com.runtik.dbcoursework.service.TaskService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +26,7 @@ public class TaskController {
 
     @PostMapping
     @RolesAllowed({"ROLE_BOSS"})
-    public ResponseEntity<String> create(@RequestBody TaskDTO task) {
+    public ResponseEntity<String> create(@RequestBody TaskCreateDTO task) {
         try {
             taskService.create(task);
             return new ResponseEntity<>("Task created successfully", HttpStatus.CREATED);
@@ -41,13 +44,11 @@ public class TaskController {
 
     @GetMapping()
     @RolesAllowed({"ROLE_BOSS"})
-    public ResponseEntity<List<TaskDTO>> get(@RequestParam int limit, @RequestParam int offset,
-                                             @RequestParam(required = false)
-                                             String[] sort,
-                                             @RequestParam(required = false)
+    public ResponseEntity<List<TaskDTO>> get(@PageableDefault Pageable pageable,
+                                                   @RequestParam(required = false)
                                              String[] filter) {
         try {
-            return new ResponseEntity<>(taskService.getTasks(limit, offset, sort, filter), HttpStatus.CREATED);
+            return new ResponseEntity<>(taskService.getTasks(pageable, filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

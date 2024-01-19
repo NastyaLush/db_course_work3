@@ -6,6 +6,8 @@ import com.runtik.dbcoursework.service.EventService;
 import com.runtik.dbcoursework.tables.pojos.GetEventParticipants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -37,13 +39,12 @@ public class EventController {
 
     @GetMapping
     @Secured("ROLE_BOSS")
-    public ResponseEntity<List<EventDTO>> get(@RequestParam int limit,
-                                              @RequestParam int offset,
-                                              @RequestParam(required = false) String[] sort,
-                                              @RequestParam(required = false) String[] filter
+    public ResponseEntity<List<EventDTO>> get(
+            @PageableDefault Pageable pageable,
+            @RequestParam(required = false) String[] filter
     ) {
         try {
-            return new ResponseEntity<>(eventService.getEvents(limit, offset, sort, filter), HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.getEvents(pageable, filter), HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e);
@@ -66,14 +67,12 @@ public class EventController {
     @GetMapping(path = "get_participants")
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
     public ResponseEntity<List<GetEventParticipants>> getEventParticipants(@RequestParam Integer eventId,
-                                                                           @RequestParam int limit,
-                                                                           @RequestParam int offset,
-                                                                           @RequestParam(required = false)
-                                                                           String[] sort,
+                                                                           @PageableDefault Pageable pageable,
                                                                            @RequestParam(required = false)
                                                                            String[] filter) {
         try {
-            return new ResponseEntity<>(eventService.getEventParticipants(eventId, limit, offset,sort,filter), HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.getEventParticipants(eventId, pageable, filter),
+                                        HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);

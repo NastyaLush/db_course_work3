@@ -1,7 +1,6 @@
 package com.runtik.dbcoursework.repository;
 
 import com.runtik.dbcoursework.Tables;
-import com.runtik.dbcoursework.dto.PersonCreateDTO;
 import com.runtik.dbcoursework.dto.PersonSelectDTO;
 import com.runtik.dbcoursework.enums.Role;
 import com.runtik.dbcoursework.tables.pojos.Person;
@@ -9,6 +8,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.SortField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
@@ -33,12 +33,14 @@ public class PersonRepository {
                          .get(0);
     }
 
-    public List<PersonSelectDTO> getPersons(int limit, int offset, List<SortField<?>> sortFields, Condition condition) {
-        try (var table = dslContext.selectFrom(Tables.PERSON)) {
+    public List<PersonSelectDTO> getPersons(Pageable pageable, List<SortField<?>> sortFields, Condition condition) {
+        try (var table = dslContext.select( Tables.PERSON.PERSON_ID,
+                                           Tables.PERSON.PERSON_NAME,Tables.PERSON.PERSON_ROLE, Tables.PERSON.PERSON_FRACTION_ID)
+                                   .from(Tables.PERSON)) {
             return table.where(condition)
                         .orderBy(sortFields)
-                        .limit(limit)
-                        .offset(offset)
+                        .limit(pageable.getPageSize())
+                        .offset(pageable.getPageNumber())
                         .fetchInto(PersonSelectDTO.class);
         }
     }

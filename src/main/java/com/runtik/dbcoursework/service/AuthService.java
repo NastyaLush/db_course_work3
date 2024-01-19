@@ -37,7 +37,7 @@ public class AuthService {
                                                            .personId(person.getPersonId())
                                                            .personFractionId(person.getPersonFractionId())
                                                            .personName(person.getPersonName())
-                                                           .personRole(person.getPersonRole())
+                                                           .personRole(person.getPersonRole().getLiteral())
                                                            .build()
 
                            ).build();

@@ -7,6 +7,7 @@ import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+import org.springframework.data.domain.Sort;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -14,24 +15,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Util {
-    public static List<SortField<?>> getSortedFields(String[] sort, TableImpl table){
+    public static List<SortField<?>> getSortedFields(Sort sort, TableImpl table){
         List<SortField<?>> sortFields = new ArrayList<>();
         if(sort == null){
             return sortFields;
         }
-        for(int i=0;i< sort.length-1;i+=2){
-            Field<?> field = table.field(sort[i]);
-            if (field != null) {
-                SortOrder sortOrder = sort[i+1].equals("ASC") ? SortOrder.ASC : SortOrder.DESC;
-                SortField<?> sortField = field.sort(sortOrder);
-                sortFields.add(sortField);
-            }
-        }
+        sort.forEach( (order)-> {
+                          Field<?> field = table.field(order.getProperty());
+                          if (field != null) {
+                              SortOrder sortOrder = order.getDirection().name().equals("ASC") ? SortOrder.ASC : SortOrder.DESC;
+                              SortField<?> sortField = field.sort(sortOrder);
+                              sortFields.add(sortField);
+                          }
+                      }
+        );
+
 
             return sortFields;
     }
     public static Condition getFilterFields(String[] sort, TableImpl table){
-        Condition condition = DSL.noCondition();
+        Condition condition = DSL.trueCondition();
         if(sort == null){
             return condition;
         }

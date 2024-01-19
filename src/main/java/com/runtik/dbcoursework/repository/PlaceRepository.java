@@ -10,6 +10,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.SortField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,16 +21,22 @@ public class PlaceRepository {
     @Autowired
     private DSLContext dslContext;
 
-    public List<PlaceDTO> getPlaces(int limit, int offset, List<SortField<?>> sortFields, Condition condition) {
+    public List<PlaceDTO> getPlaces(Pageable pageable, List<SortField<?>> sortFields, Condition condition) {
         try (var table = dslContext.selectFrom(Tables.PLACE)) {
-            return table.where(condition).orderBy(sortFields).limit(limit).offset(offset)
-                    .fetchInto(PlaceDTO.class);
+            return table.where(condition)
+                        .orderBy(sortFields)
+                        .limit(pageable.getPageSize())
+                        .offset(
+                                pageable.getPageNumber() * pageable.getPageSize())
+                        .fetchInto(PlaceDTO.class);
         }
     }
 
-    public List<PlaceDTO> getFree(LocalDateTime from, LocalDateTime to, int limit, int offset) {
+    public List<PlaceDTO> getFree(LocalDateTime from, LocalDateTime to, Pageable pageable) {
         try (var table = dslContext.selectFrom(Routines.getFreePlaces(from, to))) {
-            return table.limit(limit).offset(offset).fetchInto(PlaceDTO.class);
+            return table.limit(pageable.getPageSize())
+                        .offset(pageable.getPageSize() * pageable.getPageNumber())
+                        .fetchInto(PlaceDTO.class);
         }
     }
 
@@ -66,9 +73,14 @@ public class PlaceRepository {
 
     }
 
-    public List<GetPlaceCharacteristics> getPlaceCharestiristic(Integer placeId, int limit, int offset, List<SortField<?>> sortFields,Condition condition) {
+    public List<GetPlaceCharacteristics> getPlaceCharestiristic(Integer placeId, Pageable pageable,
+                                                                List<SortField<?>> sortFields, Condition condition) {
         try (var table = dslContext.selectFrom(Routines.getPlaceCharacteristics(placeId))) {
-            return table.where(condition).orderBy(sortFields).limit(limit).offset(offset).fetchInto(GetPlaceCharacteristics.class);
+            return table.where(condition)
+                        .orderBy(sortFields)
+                        .limit(pageable.getPageSize())
+                        .offset(pageable.getPageSize() * pageable.getPageNumber())
+                        .fetchInto(GetPlaceCharacteristics.class);
         }
     }
 }
