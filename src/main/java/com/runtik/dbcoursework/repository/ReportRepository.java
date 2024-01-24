@@ -18,9 +18,10 @@ public class ReportRepository {
     private DSLContext dslContext;
 
     public void createReport(ReportDTO report) {
-        dslContext.insertInto(Tables.REPORT, Tables.REPORT.REPORT_CREATED_BY,
-                              Tables.REPORT.REPORT_TITLE,
-                              Tables.REPORT.REPORT_TEXT)
+        dslContext.insertInto(Tables.REPORT,
+                        Tables.REPORT.REPORT_CREATED_BY,
+                        Tables.REPORT.REPORT_TITLE,
+                        Tables.REPORT.REPORT_TEXT)
                   .values(report.getReportCreatedBy(), report.getReportTitle(), report.getReportTitle())
                   .execute();
 
@@ -37,6 +38,17 @@ public class ReportRepository {
                           .offset(
                                   pageable.getPageNumber() * pageable.getPageSize())
                           .fetchInto(ReportSelectDTO.class);
+
+        }
+    }
+
+    public ReportSelectDTO getById(int id){
+        try (var table = dslContext.select(Tables.REPORT.REPORT_ID, Tables.PERSON.PERSON_NAME,Tables.REPORT.REPORT_TITLE, Tables.REPORT.REPORT_TEXT)
+                .from(Tables.REPORT)) {
+            return table.join(Tables.PERSON)
+                    .on(Tables.REPORT.REPORT_CREATED_BY.eq(Tables.PERSON.PERSON_ID))
+                    .where(Tables.REPORT.REPORT_ID.eq(id))
+                    .fetchInto(ReportSelectDTO.class).get(0);
 
         }
     }

@@ -25,4 +25,8 @@ public class TaskService {
         return taskRepository.getTask(pageable, Util.getSortedFields(pageable.getSort(), Tables.TASK), Util.getFilterFields(filter, Tables.TASK));
     }
 
+    public TaskDTO getTaskById(int id){
+        return taskRepository.getTaskById(id);
+    }
+
 }

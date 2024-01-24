@@ -16,6 +16,7 @@ import java.util.List;
 import lombok.extern.log4j.Log4j2;
 
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController()
 @Log4j2
 @RequestMapping(path = "person")

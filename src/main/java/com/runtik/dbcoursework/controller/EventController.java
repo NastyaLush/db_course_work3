@@ -17,6 +17,7 @@ import java.util.List;
 import lombok.extern.log4j.Log4j2;
 
 @RestController()
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("event")
 @SecurityRequirement(name = "javainuseapi")
 @Log4j2
