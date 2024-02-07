@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.controller;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.dto.TaskDTO;
 import com.runtik.dbcoursework.dto.TaskCreateDTO;
 import com.runtik.dbcoursework.dto.TaskUpdateStatusDTO;
@@ -44,14 +45,15 @@ public class TaskController {
 
     @GetMapping()
     @RolesAllowed({"ROLE_BOSS"})
-    public ResponseEntity<List<TaskDTO>> get(@PageableDefault Pageable pageable,
+    public ResponseEntity<Page<List<TaskDTO>>> get(@PageableDefault Pageable pageable,
                                                    @RequestParam(required = false)
                                              String[] filter) {
         try {
+            System.out.println(taskService.getTasks(pageable, filter));
             return new ResponseEntity<>(taskService.getTasks(pageable, filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

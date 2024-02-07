@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.controller;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.dto.PersonCreateDTO;
 import com.runtik.dbcoursework.dto.PersonRoleUpdateDTO;
 import com.runtik.dbcoursework.dto.PersonSelectDTO;
@@ -31,14 +32,14 @@ public class PersonController {
 
     @GetMapping()
     @RolesAllowed("ROLE_BOSS")
-    public ResponseEntity<List<PersonSelectDTO>> get(@PageableDefault Pageable pageable,
-                                                     @RequestParam(required = false)
+    public ResponseEntity<Page<List<PersonSelectDTO>>> get(@PageableDefault Pageable pageable,
+                                                           @RequestParam(required = false)
                                                      String[] filter) {
         try {
             return new ResponseEntity<>(restService.getPersons(pageable,filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

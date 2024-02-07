@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.controller;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.dto.*;
 import com.runtik.dbcoursework.service.PlaceService;
 import com.runtik.dbcoursework.tables.pojos.GetPlaceCharacteristics;
@@ -26,27 +27,27 @@ public class PlaceController {
 
     @GetMapping()
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<PlaceDTO>> get(@PageableDefault Pageable pageable,
-                                              @RequestParam(required = false)
+    public ResponseEntity<Page<List<PlaceDTO>>> get(@PageableDefault Pageable pageable,
+                                                    @RequestParam(required = false)
                                               String[] filter) {
         try {
             return new ResponseEntity<>(placeService.getPlaces(pageable, filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(path = "getFree")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<PlaceDTO>> getFree(@RequestParam LocalDateTime from, @RequestParam LocalDateTime to,
+    public ResponseEntity<Page<List<PlaceDTO>>> getFree(@RequestParam LocalDateTime from, @RequestParam LocalDateTime to,
                                                   @PageableDefault Pageable pageable) {
         try {
             return new ResponseEntity<>(placeService.getFree(from, to, pageable), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -115,7 +116,7 @@ public class PlaceController {
 
     @GetMapping(path = "get_place_characteristics")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<GetPlaceCharacteristics>> getPlaceCharestiristic(@RequestParam Integer placeId,
+    public ResponseEntity<Page<List<GetPlaceCharacteristics>>> getPlaceCharestiristic(@RequestParam Integer placeId,
                                                                                 @PageableDefault Pageable pageable,
                                                                                 @RequestParam(required = false)
                                                                                 String[] filter) {
@@ -124,7 +125,7 @@ public class PlaceController {
                                         HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

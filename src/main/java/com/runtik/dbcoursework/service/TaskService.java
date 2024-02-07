@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.service;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.Util;
 import com.runtik.dbcoursework.dto.TaskDTO;
@@ -21,7 +22,7 @@ public class TaskService {
     public void updateStatus(Integer taskId, Status newStatus){
         taskRepository.updateStatus(taskId, newStatus);
     }
-    public List<TaskDTO> getTasks(Pageable pageable, String[]filter) {
+    public Page<List<TaskDTO>> getTasks(Pageable pageable, String[]filter) {
         return taskRepository.getTask(pageable, Util.getSortedFields(pageable.getSort(), Tables.TASK), Util.getFilterFields(filter, Tables.TASK));
     }
 

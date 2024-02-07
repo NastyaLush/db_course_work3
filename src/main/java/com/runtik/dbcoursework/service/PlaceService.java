@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.service;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.Util;
 import com.runtik.dbcoursework.dto.CharacteristicDTO;
@@ -19,13 +20,13 @@ public class PlaceService {
     @Autowired
     private PlaceRepository placeRepository;
 
-    public List<PlaceDTO> getPlaces(Pageable pageable, String[] filter) {
+    public Page<List<PlaceDTO>> getPlaces(Pageable pageable, String[] filter) {
         return placeRepository.getPlaces(pageable, Util.getSortedFields(pageable.getSort(), Tables.PLACE),
                                          Util.getFilterFields(filter, Tables.PLACE));
 
     }
 
-    public List<PlaceDTO> getFree(LocalDateTime from, LocalDateTime to, Pageable pageable) {
+    public Page<List<PlaceDTO>> getFree(LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return placeRepository.getFree(from, to, pageable);
     }
 
@@ -52,7 +53,7 @@ public class PlaceService {
         placeRepository.addPlaceToEvent(eventPlace);
     }
 
-    public List<GetPlaceCharacteristics> getPlaceCharestiristic(Integer placeId, Pageable pageable, String[] filter) {
+    public Page<List<GetPlaceCharacteristics>> getPlaceCharestiristic(Integer placeId, Pageable pageable, String[] filter) {
         return placeRepository.getPlaceCharestiristic(placeId, pageable, Util.getSortedFields(pageable.getSort(),
                                                                                               Tables.GET_PLACE_CHARACTERISTICS),
                                                       Util.getFilterFields(filter, Tables.GET_PLACE_CHARACTERISTICS));

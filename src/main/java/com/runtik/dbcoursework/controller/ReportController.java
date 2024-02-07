@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.controller;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.dto.ReportDTO;
 import com.runtik.dbcoursework.dto.ReportSelectDTO;
 import com.runtik.dbcoursework.service.ReportService;
@@ -41,14 +42,14 @@ public class ReportController {
 
     @GetMapping()
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_HELPER", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<ReportSelectDTO>> get(@PageableDefault Pageable pageable,
-                                                     @RequestParam(required = false)
+    public ResponseEntity<Page<List<ReportSelectDTO>>> get(@PageableDefault Pageable pageable,
+                                                           @RequestParam(required = false)
                                                String[] filter) {
         try {
             return new ResponseEntity<>(reportService.getReport(pageable, filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

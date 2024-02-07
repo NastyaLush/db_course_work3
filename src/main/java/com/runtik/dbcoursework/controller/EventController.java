@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.controller;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.dto.EventDTO;
 import com.runtik.dbcoursework.dto.ParticipantDTO;
 import com.runtik.dbcoursework.service.EventService;
@@ -39,7 +40,7 @@ public class EventController {
 
     @GetMapping
     @Secured("ROLE_BOSS")
-    public ResponseEntity<List<EventDTO>> get(
+    public ResponseEntity<Page<List<EventDTO>>> get(
             @PageableDefault Pageable pageable,
             @RequestParam(required = false) String[] filter
     ) {
@@ -48,7 +49,7 @@ public class EventController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e);
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -66,16 +67,16 @@ public class EventController {
 
     @GetMapping(path = "get_participants")
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
-    public ResponseEntity<List<GetEventParticipants>> getEventParticipants(@RequestParam Integer eventId,
-                                                                           @PageableDefault Pageable pageable,
-                                                                           @RequestParam(required = false)
+    public ResponseEntity<Page<List<GetEventParticipants>>> getEventParticipants(@RequestParam Integer eventId,
+                                                                                 @PageableDefault Pageable pageable,
+                                                                                 @RequestParam(required = false)
                                                                            String[] filter) {
         try {
             return new ResponseEntity<>(eventService.getEventParticipants(eventId, pageable, filter),
                                         HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

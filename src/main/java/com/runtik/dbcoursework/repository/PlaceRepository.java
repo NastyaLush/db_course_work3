@@ -1,13 +1,17 @@
 package com.runtik.dbcoursework.repository;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.Routines;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.dto.CharacteristicDTO;
 import com.runtik.dbcoursework.dto.EventPlaceDTO;
 import com.runtik.dbcoursework.dto.PlaceDTO;
 import com.runtik.dbcoursework.tables.pojos.GetPlaceCharacteristics;
+import com.runtik.dbcoursework.tables.records.GetPlaceCharacteristicsRecord;
+import com.runtik.dbcoursework.tables.records.PlaceRecord;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.SelectConditionStep;
 import org.jooq.SortField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -21,22 +25,26 @@ public class PlaceRepository {
     @Autowired
     private DSLContext dslContext;
 
-    public List<PlaceDTO> getPlaces(Pageable pageable, List<SortField<?>> sortFields, Condition condition) {
+    public Page<List<PlaceDTO>> getPlaces(Pageable pageable, List<SortField<?>> sortFields, Condition condition) {
         try (var table = dslContext.selectFrom(Tables.PLACE)) {
-            return table.where(condition)
-                        .orderBy(sortFields)
-                        .limit(pageable.getPageSize())
-                        .offset(
-                                pageable.getPageNumber() * pageable.getPageSize())
-                        .fetchInto(PlaceDTO.class);
+            SelectConditionStep<PlaceRecord> placeRecordSelectConditionStep = table.where(condition);
+            return new Page<>(placeRecordSelectConditionStep
+                                   .orderBy(sortFields)
+                                   .limit(pageable.getPageSize())
+                                   .offset(
+                                           pageable.getPageNumber() * pageable.getPageSize())
+                                   .fetchInto(PlaceDTO.class),
+                              dslContext.fetchCount(placeRecordSelectConditionStep
+                              ));
         }
     }
 
-    public List<PlaceDTO> getFree(LocalDateTime from, LocalDateTime to, Pageable pageable) {
+    public Page<List<PlaceDTO>> getFree(LocalDateTime from, LocalDateTime to, Pageable pageable) {
         try (var table = dslContext.selectFrom(Routines.getFreePlaces(from, to))) {
-            return table.limit(pageable.getPageSize())
-                        .offset(pageable.getPageSize() * pageable.getPageNumber())
-                        .fetchInto(PlaceDTO.class);
+            return new Page<>(table.limit(pageable.getPageSize())
+                                   .offset(pageable.getPageSize() * pageable.getPageNumber())
+                                   .fetchInto(PlaceDTO.class),
+                              dslContext.fetchCount(table));
         }
     }
 
@@ -73,14 +81,17 @@ public class PlaceRepository {
 
     }
 
-    public List<GetPlaceCharacteristics> getPlaceCharestiristic(Integer placeId, Pageable pageable,
-                                                                List<SortField<?>> sortFields, Condition condition) {
+    public Page<List<GetPlaceCharacteristics>> getPlaceCharestiristic(Integer placeId, Pageable pageable,
+                                                                      List<SortField<?>> sortFields,
+                                                                      Condition condition) {
         try (var table = dslContext.selectFrom(Routines.getPlaceCharacteristics(placeId))) {
-            return table.where(condition)
-                        .orderBy(sortFields)
-                        .limit(pageable.getPageSize())
-                        .offset(pageable.getPageSize() * pageable.getPageNumber())
-                        .fetchInto(GetPlaceCharacteristics.class);
+            SelectConditionStep<GetPlaceCharacteristicsRecord> getPlaceCharacteristicsRecords = table.where(condition);
+            return new Page<>(getPlaceCharacteristicsRecords
+                                   .orderBy(sortFields)
+                                   .limit(pageable.getPageSize())
+                                   .offset(pageable.getPageSize() * pageable.getPageNumber())
+                                   .fetchInto(GetPlaceCharacteristics.class),
+                              dslContext.fetchCount(getPlaceCharacteristicsRecords));
         }
     }
 }

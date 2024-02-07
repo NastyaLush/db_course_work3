@@ -1,8 +1,8 @@
 package com.runtik.dbcoursework.service;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.Util;
-import com.runtik.dbcoursework.dto.PersonCreateDTO;
 import com.runtik.dbcoursework.dto.PersonSelectDTO;
 import com.runtik.dbcoursework.enums.Role;
 import com.runtik.dbcoursework.repository.PersonRepository;
@@ -21,7 +21,7 @@ public class PersonService {
     public void changePersonRole(Integer personID, Role role){
         personRepository.changePersonRole(personID, role);
     }
-    public List<PersonSelectDTO> getPersons(Pageable pageable, String[]filter) {
+    public Page<List<PersonSelectDTO>> getPersons(Pageable pageable, String[]filter) {
 
         return personRepository.getPersons(pageable, Util.getSortedFields(pageable.getSort(), Tables.PERSON), Util.getFilterFields(filter, Tables.PERSON));
 

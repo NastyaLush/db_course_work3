@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.service;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.Util;
 import com.runtik.dbcoursework.dto.ReportDTO;
@@ -18,7 +19,7 @@ public class ReportService {
     public void createReport(ReportDTO report) {
         reportRepository.createReport(report);
     }
-    public List<ReportSelectDTO> getReport(Pageable pageable, String[]filter){
+    public Page<List<ReportSelectDTO>> getReport(Pageable pageable, String[]filter){
         return reportRepository.getReport(pageable, Util.getSortedFields(pageable.getSort(), Tables.REPORT), Util.getFilterFields(filter, Tables.REPORT));
     }
 

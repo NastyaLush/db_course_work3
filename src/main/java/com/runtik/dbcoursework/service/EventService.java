@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.service;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.Util;
 import com.runtik.dbcoursework.dto.EventDTO;
@@ -20,9 +21,8 @@ public class EventService {
         eventRepository.create(event);
     }
 
-    public List<EventDTO> getEvents(Pageable pageable, String[] filter) {
-        System.out.println(eventRepository.getEvents(pageable, Util.getSortedFields(pageable.getSort(), Tables.EVENT),
-                                                     Util.getFilterFields(filter, Tables.EVENT)).get(0));
+    public Page<List<EventDTO>> getEvents(Pageable pageable, String[] filter) {
+
         return eventRepository.getEvents(pageable, Util.getSortedFields(pageable.getSort(), Tables.EVENT),
                                          Util.getFilterFields(filter, Tables.EVENT));
     }
@@ -31,7 +31,7 @@ public class EventService {
         eventRepository.addParticipant(personId, eventId);
     }
 
-    public List<GetEventParticipants> getEventParticipants(Integer eventId, Pageable pageable, String[] filter) {
+    public Page<List<GetEventParticipants>> getEventParticipants(Integer eventId, Pageable pageable, String[] filter) {
         return eventRepository.getEventParticipants(eventId, pageable,
                                                     Util.getSortedFields(pageable.getSort(), Tables.EVENT),
                                                     Util.getFilterFields(filter, Tables.EVENT));

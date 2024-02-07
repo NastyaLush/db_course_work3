@@ -1,5 +1,6 @@
 package com.runtik.dbcoursework.service;
 
+import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.Tables;
 import com.runtik.dbcoursework.Util;
 import com.runtik.dbcoursework.dto.TestResultDTO;
@@ -16,7 +17,7 @@ public class TestResultService {
     @Autowired
     private TestResultRepository testResultRepository;
 
-    public List<TestResultSelectDTO> getTestResult(Pageable pageable, String[]filter) {
+    public Page<List<TestResultSelectDTO>> getTestResult(Pageable pageable, String[]filter) {
         return testResultRepository.getTestResults(pageable, Util.getSortedFields(pageable.getSort(), Tables.TEST_RESULT), Util.getFilterFields(filter, Tables.TEST_RESULT));
     }
 
