@@ -16,6 +16,7 @@ import java.util.List;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @Log4j2
 @RequestMapping(path = "report")
 @SecurityRequirement(name = "javainuseapi")
@@ -50,6 +51,17 @@ public class ReportController {
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_HELPER", "ROLE_EMPLOYEE"})
+    public ResponseEntity<ReportSelectDTO> getById(@PathVariable int id) {
+        try {
+            return new ResponseEntity<>(reportService.getById(id), HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -23,4 +23,8 @@ public class ReportService {
         return reportRepository.getReport(pageable, Util.getSortedFields(pageable.getSort(), Tables.REPORT), Util.getFilterFields(filter, Tables.REPORT));
     }
 
+    public ReportSelectDTO getById(int id){
+        return reportRepository.getById(id);
+    }
+
 }

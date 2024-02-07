@@ -12,10 +12,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
+
 import lombok.extern.log4j.Log4j2;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @Log4j2
 @SecurityRequirement(name = "javainuseapi")
@@ -45,15 +48,27 @@ public class TaskController {
 
     @GetMapping()
     @RolesAllowed({"ROLE_BOSS"})
+
     public ResponseEntity<Page<List<TaskDTO>>> get(@PageableDefault Pageable pageable,
                                                    @RequestParam(required = false)
                                              String[] filter) {
         try {
             System.out.println(taskService.getTasks(pageable, filter));
-            return new ResponseEntity<>(taskService.getTasks(pageable, filter), HttpStatus.CREATED);
+            return new ResponseEntity<>(taskService.getTasks(pageable, filter), HttpStatus.OK);
+
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/{id}")
+    @RolesAllowed({"ROLE_BOSS"})
+    public ResponseEntity<TaskDTO> getById(@PathVariable int id) {
+        try {
+            return new ResponseEntity<>(taskService.getTaskById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
