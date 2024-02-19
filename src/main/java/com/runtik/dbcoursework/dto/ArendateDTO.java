@@ -9,6 +9,4 @@ public class ArendateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer placeId;
     private Integer arendatorId;
-    private LocalDateTime fromTime;
-    private LocalDateTime toTime;
 }

@@ -13,8 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
+
 import lombok.extern.log4j.Log4j2;
 
 @RestController()
@@ -68,13 +70,17 @@ public class EventController {
 
     @GetMapping(path = "get_participants")
     @RolesAllowed({"ROLE_BOSS", "ROLE_EMPLOYEE"})
-    public ResponseEntity<Page<List<GetEventParticipants>>> getEventParticipants(@RequestParam Integer eventId,
-                                                                                 @PageableDefault Pageable pageable,
-                                                                                 @RequestParam(required = false)
-                                                                           String[] filter) {
+    public ResponseEntity<Page<List<GetEventParticipants>>> getEventParticipants(
+            @RequestParam Integer eventId,
+            @PageableDefault Pageable pageable,
+            @RequestParam(required = false)
+            String[] filter
+    ) {
         try {
-            return new ResponseEntity<>(eventService.getEventParticipants(eventId, pageable, filter),
-                                        HttpStatus.CREATED);
+            return new ResponseEntity<>(
+                    eventService.getEventParticipants(eventId, pageable, filter),
+                    HttpStatus.CREATED
+            );
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

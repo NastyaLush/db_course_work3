@@ -14,7 +14,9 @@ import org.jooq.SortField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
+
 import static com.runtik.dbcoursework.Routines.addUserOnEvent;
 
 @Repository
@@ -24,21 +26,25 @@ public class EventRepository {
     private DSLContext dslContext;
 
     public void create(EventDTO event) {
-        dslContext.insertInto(Tables.EVENT, Tables.EVENT.EVENT_NAME)
-                  .values(event.getEventName())
-                  .execute();
+        dslContext.insertInto(
+                        Tables.EVENT,
+                        Tables.EVENT.EVENT_NAME
+                )
+                .values(event.getEventName())
+                .execute();
     }
 
     public Page<List<EventDTO>> getEvents(Pageable pageable, List<SortField<?>> sortFields, Condition condition) {
         try (var table = dslContext.selectFrom(Tables.EVENT)) {
-            SelectConditionStep<EventRecord> eventRecords = table.where(condition);
+            SelectConditionStep<EventRecord> eventRecords =
+                    table.where(condition);
+
             return new Page<>(eventRecords
-                                   .orderBy(sortFields)
-                                   .limit(pageable.getPageSize())
-                                   .offset(
-                                           pageable.getPageNumber() * pageable.getPageSize())
-                                   .fetchInto(EventDTO.class),
-                              dslContext.fetchCount(eventRecords));
+                    .orderBy(sortFields)
+                    .limit(pageable.getPageSize())
+                    .offset(pageable.getPageNumber() * pageable.getPageSize())
+                    .fetchInto(EventDTO.class),
+                    dslContext.fetchCount(eventRecords));
         }
     }
 
@@ -46,19 +52,21 @@ public class EventRepository {
         addUserOnEvent(dslContext.configuration(), personId, eventId);
     }
 
-    public Page<List<GetEventParticipants>> getEventParticipants(Integer eventId, Pageable pageable,
-                                                                 List<SortField<?>> sortFields, Condition condition) {
+    public Page<List<GetEventParticipants>> getEventParticipants(
+            Integer eventId, Pageable pageable,
+            List<SortField<?>> sortFields,
+            Condition condition
+    ) {
         try (var table = dslContext.selectFrom(Routines.getEventParticipants(eventId))) {
-            SelectConditionStep<GetEventParticipantsRecord> getEventParticipantsRecords = table.where(condition);
+            SelectConditionStep<GetEventParticipantsRecord> getEventParticipantsRecords =
+                    table.where(condition);
+
             return new Page<>(getEventParticipantsRecords
-                                   .orderBy(sortFields)
-                                   .limit(pageable.getPageSize())
-                                   .offset(
-                                           pageable.getPageNumber() * pageable.getPageSize())
-                                   .fetchInto(GetEventParticipants.class),
-                              dslContext.fetchCount(getEventParticipantsRecords));
+                    .orderBy(sortFields)
+                    .limit(pageable.getPageSize())
+                    .offset(pageable.getPageNumber() * pageable.getPageSize())
+                    .fetchInto(GetEventParticipants.class),
+                    dslContext.fetchCount(getEventParticipantsRecords));
         }
-
     }
-
 }

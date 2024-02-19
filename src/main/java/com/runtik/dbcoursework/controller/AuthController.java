@@ -4,6 +4,7 @@ import com.runtik.dbcoursework.dto.AuthResponse;
 import com.runtik.dbcoursework.dto.LoginRequest;
 import com.runtik.dbcoursework.dto.SignUpRequest;
 import com.runtik.dbcoursework.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
     private final AuthService authService;
-
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {

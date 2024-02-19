@@ -11,6 +11,7 @@ import com.runtik.dbcoursework.tables.pojos.GetPlaceCharacteristics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,14 +21,22 @@ public class PlaceService {
     @Autowired
     private PlaceRepository placeRepository;
 
+
+    public PlaceDTO getById(int id ){
+        return placeRepository.getById(id);
+    }
+
     public Page<List<PlaceDTO>> getPlaces(Pageable pageable, String[] filter) {
-        return placeRepository.getPlaces(pageable, Util.getSortedFields(pageable.getSort(), Tables.PLACE),
-                                         Util.getFilterFields(filter, Tables.PLACE));
+        return placeRepository.getPlaces(
+                pageable,
+                Util.getSortedFields(pageable.getSort(), Tables.PLACE),
+                Util.getFilterFields(filter, Tables.PLACE)
+        );
 
     }
 
     public Page<List<PlaceDTO>> getFree(LocalDateTime from, LocalDateTime to, Pageable pageable) {
-        return placeRepository.getFree(from, to, pageable);
+        return placeRepository.getFreeQuery(pageable);
     }
 
     public void create(PlaceDTO place) {
@@ -55,7 +64,7 @@ public class PlaceService {
 
     public Page<List<GetPlaceCharacteristics>> getPlaceCharestiristic(Integer placeId, Pageable pageable, String[] filter) {
         return placeRepository.getPlaceCharestiristic(placeId, pageable, Util.getSortedFields(pageable.getSort(),
-                                                                                              Tables.GET_PLACE_CHARACTERISTICS),
-                                                      Util.getFilterFields(filter, Tables.GET_PLACE_CHARACTERISTICS));
+                        Tables.GET_PLACE_CHARACTERISTICS),
+                Util.getFilterFields(filter, Tables.GET_PLACE_CHARACTERISTICS));
     }
 }

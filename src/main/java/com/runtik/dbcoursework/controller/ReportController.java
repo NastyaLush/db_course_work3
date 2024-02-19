@@ -3,6 +3,7 @@ package com.runtik.dbcoursework.controller;
 import com.runtik.dbcoursework.Page;
 import com.runtik.dbcoursework.dto.ReportDTO;
 import com.runtik.dbcoursework.dto.ReportSelectDTO;
+import com.runtik.dbcoursework.dto.TaskUpdateStatusDTO;
 import com.runtik.dbcoursework.service.ReportService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,5 +64,10 @@ public class ReportController {
             log.error(e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PutMapping()
+    public void updateStatus(@RequestBody TaskUpdateStatusDTO taskUpdateStatusDTO ){
+        this.reportService.updateStatus(taskUpdateStatusDTO.getId(), taskUpdateStatusDTO.getNewStatus());
     }
 }

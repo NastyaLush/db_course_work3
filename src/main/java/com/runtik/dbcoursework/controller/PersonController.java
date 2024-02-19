@@ -12,8 +12,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
+
 import lombok.extern.log4j.Log4j2;
 
 
@@ -32,12 +34,13 @@ public class PersonController {
     }
 
     @GetMapping()
-    @RolesAllowed("ROLE_BOSS")
-    public ResponseEntity<Page<List<PersonSelectDTO>>> get(@PageableDefault Pageable pageable,
-                                                           @RequestParam(required = false)
-                                                     String[] filter) {
+//    @RolesAllowed("ROLE_BOSS")
+    public ResponseEntity<Page<List<PersonSelectDTO>>> get(
+            @PageableDefault Pageable pageable,
+            @RequestParam(required = false)
+            String[] filter) {
         try {
-            return new ResponseEntity<>(restService.getPersons(pageable,filter), HttpStatus.CREATED);
+            return new ResponseEntity<>(restService.getPersons(pageable, filter), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -45,7 +48,7 @@ public class PersonController {
     }
 
     @PutMapping()
-    @RolesAllowed({"ROLE_BOSS"})
+//    @RolesAllowed({"ROLE_BOSS"})
     public void updateRole(@RequestBody PersonRoleUpdateDTO personRoleUpdateDTO) {
         restService.changePersonRole(personRoleUpdateDTO.getPersonID(), personRoleUpdateDTO.getRole());
     }

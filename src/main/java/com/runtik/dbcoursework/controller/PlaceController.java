@@ -8,12 +8,16 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.security.RolesAllowed;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import lombok.extern.log4j.Log4j2;
 
 @RestController
@@ -28,9 +32,11 @@ public class PlaceController {
 
     @GetMapping()
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<Page<List<PlaceDTO>>> get(@PageableDefault Pageable pageable,
-                                                    @RequestParam(required = false)
-                                              String[] filter) {
+    public ResponseEntity<Page<List<PlaceDTO>>> get(
+            @PageableDefault Pageable pageable,
+            @RequestParam(required = false)
+            String[] filter
+    ) {
         try {
             return new ResponseEntity<>(placeService.getPlaces(pageable, filter), HttpStatus.CREATED);
         } catch (Exception e) {
@@ -40,12 +46,27 @@ public class PlaceController {
 
     }
 
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PlaceDTO> getById(@PathVariable int id) {
+        return new ResponseEntity<>(placeService.getById(id), HttpStatus.OK);
+    }
+
     @GetMapping(path = "getFree")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<Page<List<PlaceDTO>>> getFree(@RequestParam LocalDateTime from, @RequestParam LocalDateTime to,
-                                                  @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<List<PlaceDTO>>> getFree(
+            @RequestParam(value = "from", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+            LocalDateTime from,
+            @RequestParam(value = "to", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+            LocalDateTime to,
+            @PageableDefault Pageable pageable
+    ) {
         try {
-            return new ResponseEntity<>(placeService.getFree(from, to, pageable), HttpStatus.CREATED);
+            var _from = from != null ? from : LocalDateTime.now().minusDays(7);
+            var _to = to != null ? to : LocalDateTime.now();
+            return new ResponseEntity<>(placeService.getFree(_from, _to, pageable), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -91,11 +112,12 @@ public class PlaceController {
     }
 
     @PostMapping(path = "arendate")
-    @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR"})
     public ResponseEntity<String> arendate(@RequestBody ArendateDTO arendateDTO) {
         try {
-            placeService.arendate(arendateDTO.getPlaceId(), arendateDTO.getArendatorId(), arendateDTO.getFromTime(),
-                                  arendateDTO.getToTime());
+            var from = LocalDateTime.now();
+            var to = LocalDateTime.now().plusDays(20);
+            placeService.arendate(arendateDTO.getPlaceId(), arendateDTO.getArendatorId(), from,
+                    to);
             return new ResponseEntity<>("place arendated", HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
@@ -117,13 +139,16 @@ public class PlaceController {
 
     @GetMapping(path = "get_place_characteristics")
     @RolesAllowed({"ROLE_BOSS", "ROLE_ARENDATOR", "ROLE_EMPLOYEE"})
-    public ResponseEntity<Page<List<GetPlaceCharacteristics>>> getPlaceCharestiristic(@RequestParam Integer placeId,
-                                                                                @PageableDefault Pageable pageable,
-                                                                                @RequestParam(required = false)
-                                                                                String[] filter) {
+    public ResponseEntity<Page<List<GetPlaceCharacteristics>>> getPlaceCharestiristic(
+            @RequestParam Integer placeId,
+            @PageableDefault Pageable pageable,
+            @RequestParam(required = false)
+            String[] filter
+    ) {
         try {
-            return new ResponseEntity<>(placeService.getPlaceCharestiristic(placeId, pageable, filter),
-                                        HttpStatus.CREATED);
+            return new ResponseEntity<>(
+                    placeService.getPlaceCharestiristic(placeId, pageable, filter),
+                    HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

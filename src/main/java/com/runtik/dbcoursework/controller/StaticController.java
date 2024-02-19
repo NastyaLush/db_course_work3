@@ -13,5 +13,4 @@ public class StaticController {
     public String homePage() {
         return "index.html";
     }
-
 }
